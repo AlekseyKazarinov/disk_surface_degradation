@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="4ffde3f6-27cf-4959-b349-21b686f9d65a" name="github.com" url="https://github.com/AlekseyKazarinov/disk_surface_degradation.git">
+        <fileTransfer port="0" accessType="LOCAL" />
+      </webServer>
+    </option>
+  </component>
+</project>
