@@ -3,14 +3,19 @@ from random import random
 
 """
 In this module different distribution functions are described.
-By this time there are two types of the functions: linear and exponential decay.
+By this time there are two types of the functions: linear and exponential decay, user_dist
 These functions are implemented inside get_distribution function, which can receive
 additional parameters that may be required in calculations:
 - max_number - most big number of files that have the same size
 - max_size - the greatest size of file on a disk (sectors)
+- file_name - file that has a distribution of files by size, must have for user_dist
 It is recommended to set at least one parameter.
 Each function in get_distribution might have its restricted set of required parameters.
 """
+
+
+class ReadFileException(Exception):
+    pass
 
 
 def convert_to_sectors(volume, sector_size=4):
@@ -23,6 +28,21 @@ def convert_to_sectors(volume, sector_size=4):
     return math.ceil(volume * (2 ** 20) / sector_size)
 
 
+def load_from_file(name):
+    """
+    loads an distribution function from the file 'name'. The format of input data is 2 text columns:
+    first one is a size, second one is a number of files, which
+    :param name:
+    :return:
+    """
+    file = open(name, 'r')
+    dist = dict()
+    for line in file:
+        size, n = line.rstrip().split()
+        dist[size] = n
+    return dist
+
+
 def get_distribution(volume, form, **kargs):
     """
     :param volume: volume dedicated to files, number of sectors
@@ -32,9 +52,9 @@ def get_distribution(volume, form, **kargs):
     """
     max_number = kargs.get('max_number')
     max_size = kargs.get('max_size')
+    file_name = kargs.get('file_name')
 
     print('max_size in get_distribution = ', max_size)
-
 
     def line(x):
         """
@@ -86,8 +106,16 @@ def get_distribution(volume, form, **kargs):
         else:
             return math.floor(a*math.exp(-alpha*x) - c) if flag else math.ceil(a*math.exp(-alpha*x) - c)
 
+    def user_dist(x):
+        if not file_name:
+            raise ReadFileException('Name of user file have not specified.')
+        dist = load_from_file(file_name)
+        assert x > 0
+        return dist.get(x, 0)
+
     functions = {'linear': line,
-                 'exp_decay': exp_decay}
+                 'exp_decay': exp_decay,
+                 'user_dist': user_dist}
 
     return functions[form]
 
@@ -97,4 +125,4 @@ if __name__ == '__main__':
     v = convert_to_sectors(0.04)
     f = get_distribution(v, form='exp_decay', max_size=s)
     for x in range(0, 1000, 1):
-        print(x, ' {0}'.format(f(x)))
+        print(x, '{0}'.format(f(x)))

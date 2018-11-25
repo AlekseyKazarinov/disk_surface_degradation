@@ -60,8 +60,6 @@ class File(Sequence):
             self.is_broken = True
             success = True
         #print('file s = ', self.sequence, ' broken: ', self.is_broken)
-        if success:
-            File.counter += 1
         return success
 
 
