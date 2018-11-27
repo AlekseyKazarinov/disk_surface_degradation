@@ -1,7 +1,4 @@
-
-from dist import *
-
-
+from distributions.dist import *
 """
 Describes a disk with files in it
 """
@@ -44,8 +41,8 @@ class File(Sequence):
         self.id = File.id
         File.id += 1
         self.is_broken = False  # изначально все файлы в целостности
-        if File.id / 10000 == 0:
-            print('current id', File.id)
+        #if File.id / 10000 == 0:
+        #    print('current id', File.id)
 
     def damage(self, address):
         """

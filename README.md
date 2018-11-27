@@ -12,6 +12,8 @@ So I creates this program to simulate and to plot P(b), where:
   P - percent of whole files (files that did not damaged)
   b - number of bad blocks
 
+Сurrent version - alpha
+
 SYSTEM REQUIREMENTS:
 For the model, described in code, the more the disk volume, the more RAM are required.
 It depends of set parameters such as volume of the disk (DISK_VOLUME), 
