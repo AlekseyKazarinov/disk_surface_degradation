@@ -24,7 +24,8 @@ def load_from_file():
     for line in file:
         size, n = (int(i) for i in line.rstrip().split())
         dist[size] = n
-        distributions.volume += size * n
+        #distributions.volume += size * n
+        set_volume(get_volume() + size*n)
     return dist
 
 

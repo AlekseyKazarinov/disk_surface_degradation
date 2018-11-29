@@ -77,16 +77,15 @@ class DiskIterator:
 
 class Disk:
     def __init__(self, sector_size=4, volume=0.1):
-        print('Я тут!')
         self.sector_size = sector_size  # размер сегмента диска, Кб
         self.volume = volume  # объём диска, Гб
         self.num_sectors = convert_to_sectors(volume, sector_size)  # всего сегментов на диске
         self.files = []  # файлы, хранящиеся на диске
         self.num_engaged_sectors = 0  # Занято секторов файлами
         self.num_bad_sectors = 0
-        print(self.num_sectors, self.num_engaged_sectors)
+        #print(self.num_sectors, self.num_engaged_sectors)
         self.free = []  # Sequence(self.num_sectors - self.num_engaged_sectors) - убрано, чтобы работало быстрее
-        print('Я тут!')
+        self.dist = None   # Distribution of files by their size on the disk
 
     def __iter__(self):
         return DiskIterator(self)
@@ -111,27 +110,27 @@ class Disk:
             have = self.volume
             raise DiskException(f'Диск не резиновый! Требуется {take} Гб, имеется {have} Гб')
         engaged_sectors = convert_to_sectors(engaged_space, 4)
-        print('engaged_sectors = ', engaged_sectors)
+        #print('engaged_sectors = ', engaged_sectors)
         self.num_engaged_sectors = 0
         self.free = Sequence(self.num_sectors - self.num_engaged_sectors)
         max_size = convert_to_sectors(max_size)
-        print('max_size', max_size)
+        #print('max_size', max_size)
         distribution = get_distribution(engaged_sectors, form, max_size=max_size)
+        self.dist = []
         for size in range(1, max_size+1):  # writes in the disk according our distribution function
-            print('size = ', size, 'dist(size) = ', distribution(size))
-            for file in range(distribution(size)):
+            #print('size = ', size, 'dist(size) = ', distribution(size))
+            d_size = distribution(size)
+            self.dist.append([size, d_size])
+            for file in range(d_size):
                 self.files.append(File(size))
                 self.num_engaged_sectors += size
 
     def get_unbroken_number_files(self):
         """
-        Let's our disk has a special S.M.A.R.T. system, that tells us about amount of bad sectors
-        :return: Integer number
+        Let's our disk has a special S.M.A.R.T. system, that tells us about the number of bad sectors
+        :return: Integer
         """
         cnt = 0
-        #for i in range(self.get_number_files()):
-        #    if not self.files[i].is_broken:
-        #        cnt += 1
         for f in self:
             if not f.is_broken:
                 cnt += 1
@@ -140,17 +139,11 @@ class Disk:
     def print_stats(self):
         """
         Outputs to stdout statistics, including number of bad sectors and percent of unbroken files
-        :return:
+        :return: None
         """
-        '''
-        print('bad_sectors = ', self.num_bad_sectors,
-        ' percent of unbroken files = %.2f' % float(100.0*(self.get_unbroken_number_files() / self.get_number_files())),
-        ' percent of bad blocks =%.2f' % float(100.0*(self.num_bad_sectors/self.num_sectors)))
-        '''
         print('{0}\t{1:.2f}\t{2:.2f}'.format(self.num_bad_sectors,
                                              float(100.0 * (self.get_unbroken_number_files()/self.get_number_files())),
                                              float(100.0 * (self.num_bad_sectors/self.num_sectors))))
-        #print(self.num_bad_sectors, self.get_unbroken_number_files())
 
 
 if __name__ == '__main__':

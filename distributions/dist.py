@@ -13,6 +13,10 @@ Each function in get_distribution might have its restricted set of required para
 """
 
 
+class DistException(Exception):
+    pass
+
+
 def get_distribution(vol, form, **kargs):
     """
     :param vol: volume dedicated to files, number of sectors
@@ -25,19 +29,22 @@ def get_distribution(vol, form, **kargs):
     set_max_number(kargs.get('max_number'))
     set_file_name(kargs.get('file_name'))
 
-    print('max_size in get_distribution = ', get_max_size())
+    #print('max_size in get_distribution = ', get_max_size())
 
-    if form == 'linear':
+    if form == 'linear_decay':
         from distributions import linear_decay
         return linear_decay.get_linear_decay()
 
-    if form == 'exp_decay':
+    elif form == 'exp_decay':
         from distributions import exp_decay
         return exp_decay.get_exp_decay()
 
-    if form == 'user_distribution':
+    elif form == 'user_distribution':
         from distributions import user_distribution
         user_distribution.get_user_dist()
+
+    else:
+        raise DistException('Incorrect name of distribution!')
 
 
 if __name__ == '__main__':

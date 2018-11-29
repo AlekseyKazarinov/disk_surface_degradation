@@ -1,4 +1,4 @@
-import disk
+from modelling import disk
 import random
 
 """
@@ -10,17 +10,16 @@ import random
 n - общее количество файлов на компьютере размера s
 """
 
-# these are needed to using in the program
-MAX_BAD_SECTORS = 13000
-DISK_VOLUME = 0.05  # volume of disk (Gb)
-DEDICATED_VOLUME = 0.04  # space with files in disk (Gb)
-SECTOR_SIZE = 4  # size of a sector on a disk (Kb)
-KIND_DISTRIBUTION = 'exp_decay'  # may be 'exp_decay', 'user_dist' (requires to define FILE_NAME, see next)
-
-# these are optional (used if it requires, depends of your selection)
-MAX_FILE_SIZE = 0.0005  # the greatest file size in the file system (Gb)
-MAX_NUMBER = 500  # maximal number of files which have the same size
-FILE_NAME = 'user_distribution'
+# These are needed to using in the program:
+params = dict(MAX_BAD_SECTORS=13000,
+              DISK_VOLUME=0.05,  # volume of disk (Gb)
+              DEDICATED_VOLUME=0.04,  # space with files in disk (Gb)
+              SECTOR_SIZE=4,  # size of a sector on a disk (Kb)
+              KIND_DISTRIBUTION='exp_decay',  # may be 'linear_decay', 'user_dist' (requires to define FILE_NAME, see next)
+# These are optional (used if it requires; it depends of your selection):
+              MAX_FILE_SIZE=0.0005,  # the greatest file size in the file system (Gb)
+              MAX_NUMBER=500,  # maximal number of files which have the same size
+              FILE_NAME='user_distribution_example')  # first of all you need to add this file into distributions package
 
 
 def add_bad_sector(d):
@@ -55,14 +54,19 @@ def add_bad_sector(d):
 
 
 def main():
-    print('max bad sectors = ', MAX_BAD_SECTORS)
-    my_disk = disk.Disk(SECTOR_SIZE, DISK_VOLUME)
-    my_disk.write_files(DEDICATED_VOLUME, KIND_DISTRIBUTION, MAX_FILE_SIZE)
+    print('max bad sectors = ', params['MAX_BAD_SECTORS'])
+    my_disk = disk.Disk(params['SECTOR_SIZE'], params['DISK_VOLUME'])
+    my_disk.write_files(params['DEDICATED_VOLUME'], params['KIND_DISTRIBUTION'], params['MAX_FILE_SIZE'])
+    # my_disk = disk.Disk(sector_size=4, volume=100)
+    #my_disk.write_files(70, 'exp_decay', 0.05)
     print('num engaged sectors = ', my_disk.num_engaged_sectors, '; num sectors = ', my_disk.num_sectors, sep='')
     print('total number files = ', my_disk.get_number_files())
-    for i in range(MAX_BAD_SECTORS):
+    for i in range(params['MAX_BAD_SECTORS']):
         add_bad_sector(my_disk)
         my_disk.print_stats()
+
+
+#__all__ = ['params', 'add_bad_sector']
 
 
 if __name__ == '__main__':

@@ -32,11 +32,11 @@ def build_exp_decay_dist(alpha=0.01):
     for i in range(1, max_size + 1):
         fact_volume += dist.get(i, 0)*i
     delta_volume = volume - fact_volume
-    print('delta_volume=', delta_volume)
+    #print('delta_volume=', delta_volume)
     if delta_volume > 0:
         xm = max_size
         while delta_volume:
-            x = randrange(1, xm, 1)
+            x = randrange(1, xm+1, 1)
             if x > delta_volume:
                 xm = delta_volume
             else:
