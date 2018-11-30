@@ -1,5 +1,5 @@
-import distributions
-from distributions import *
+from modelling import distributions
+from modelling.distributions import *
 
 
 dist = dict()

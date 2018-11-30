@@ -1,7 +1,7 @@
 import math
 from random import random, randrange
 
-from distributions import *
+from modelling.distributions import *
 
 
 dist = dict()

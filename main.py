@@ -1,31 +1,25 @@
-from modelling.simulation import *
-import modelling.disk as disk
+from modelling import simulation
 import cmd_out as cmd
-
-
-stats = []
-
-
-def set_parameter(name, value):
-    if name in params:
-        if value.isdigit():  # если число целое в строке
-            value = int(value)
-        elif value.lstrip('-').replace('.', '', 1).isdigit():  # если действительное, более общий случай
-            value = float(value)
-        params[name] = value
+import os
 
 
 def load_parameters():
+    params = []
     with open('params', 'r') as f:
         for line in f:
             key, value, *trash = (i for i in line.rstrip().split())
-            set_parameter(key, value)
+            params.append([key, value])
+    return params
 
 
-def gather_stats(my_disk):
-    stats.append([my_disk.num_bad_sectors,
-                  float(100.0 * (my_disk.get_unbroken_number_files() / my_disk.get_number_files())),
-                  float(100.0 * (my_disk.num_bad_sectors / my_disk.num_sectors))])
+def reset_parameter(sim):
+    name = cmd.get_input_name()
+    if name not in sim.params:
+        cmd.error_message('A mistake in name! Reset aborted.')
+    else:
+        new_value = cmd.get_input_value(name, sim.get_param(name))
+        sim.set_param(name, new_value)
+        print('The new value has been accepted.')
 
 
 def save_parameters(params):
@@ -34,60 +28,62 @@ def save_parameters(params):
             fp.write(name+'\t'+str(params[name])+'\n')
 
 
-def save_dist(my_disk):
-    with open('last_experimental_distribution.txt', 'w') as fout:
-        for pair in my_disk.dist:
+def save_dist(dist):  # слишком сильная связь с чужими модулями
+    path = 'results'
+    name = 'last_experimental_distribution.txt'
+    with open(os.path.join(path, name), 'w') as fout:
+        for pair in dist:
             fout.write(str(pair[0])+'\t'+str(pair[1])+'\n')
 
 
-def save_results(stats):
-    with open('stats.txt', 'w') as f:
+def save_stats(stats):  # слишком сильная связь :(
+    path = 'results'
+    name = 'stats.txt'
+    with open(os.path.join(path, name), 'w') as f:
         for stat in stats:
             f.write(str(stat[0])+'\t'+str(stat[1])+'\t'+str(stat[2])+'\n')
 
 
-def save_data(params, my_disk, stats):
-    save_parameters(params)
-    save_dist(my_disk)
-    save_results(stats)
+def save_data(sim):
+    save_parameters(sim.get_params())
+    save_dist(sim.get_dist())
+    save_stats(sim.get_stats())
 
 
-def simulate():
-    print('Set up parameters:')
-    cmd.print_parameters(params)
-    print('max bad sectors = ', params['MAX_BAD_SECTORS'])
-    my_disk = disk.Disk(params['SECTOR_SIZE'], params['DISK_VOLUME'])
-    my_disk.write_files(params['DEDICATED_VOLUME'], params['KIND_DISTRIBUTION'], params['MAX_FILE_SIZE'])
-    cmd.print_disk_info(my_disk)
-    for i in range(params['MAX_BAD_SECTORS']):
-        add_bad_sector(my_disk)
-        gather_stats(my_disk)
-        my_disk.print_stats()
+def simulate(sim):
+    cmd.print_parameters(sim.params)
+    sim.simulate()
+    cmd.print_simulation_info(sim.get_info())
     cmd.output_finish_message()
     if cmd.offer_save_data():
-        save_data(params, my_disk, stats)
-        cmd.successfull_save()
+        save_data(sim)
+        cmd.successful_save()
     exit(0)
 
-
-cmds = {'print --info': cmd.print_info,
-        'print --param': (lambda: cmd.print_parameters(params)),
-        'start': simulate,
-        'simulate': simulate,
-        'reset': (lambda: cmd.reset_parameter(params)),
-        'help': (lambda: cmd.print_help(cmds)),
-        'exit': (lambda: exit(0))}
+# сделать процедуру do command, в которую передаются агрументы для команд
 
 
-def main():
-    load_parameters()
-    cmd.print_intro(cmds, params)
+def menu(cmds):
     while True:
         inp = input()
         if inp in cmds:
             cmds[inp]()
         else:
             cmd.print_help(cmds)
+
+
+def main():
+    params = load_parameters()
+    model = simulation.Simulation(params)
+    cmds = {'print --info': cmd.print_info,
+            'print --param': (lambda: cmd.print_parameters(simulation.params)),
+            'start': (lambda: simulate(model)),
+            'simulate': (lambda: simulate(model)),
+            'reset': (lambda: reset_parameter(model)),
+            'help': (lambda: cmd.print_help(cmds)),
+            'exit': (lambda: exit(0))}
+    cmd.print_intro(cmds)
+    menu(cmds)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-from distributions.dist import *
+from modelling.distributions.dist import *
 """
 Describes a disk with files in it
 """
@@ -86,6 +86,7 @@ class Disk:
         #print(self.num_sectors, self.num_engaged_sectors)
         self.free = []  # Sequence(self.num_sectors - self.num_engaged_sectors) - убрано, чтобы работало быстрее
         self.dist = None   # Distribution of files by their size on the disk
+        self.stats = []
 
     def __iter__(self):
         return DiskIterator(self)
@@ -136,14 +137,27 @@ class Disk:
                 cnt += 1
         return cnt
 
+    def get_stat(self):
+        stat = dict()
+        stat['num_bad_sectors'] = self.num_bad_sectors
+        stat['percent of unbroken files'] = float(100.0 * (self.get_unbroken_number_files()/self.get_number_files()))
+        stat['percent of bad blocks'] = float(100.0 * (self.num_bad_sectors/self.num_sectors))
+        return stat
+
     def print_stats(self):
         """
         Outputs to stdout statistics, including number of bad sectors and percent of unbroken files
         :return: None
         """
-        print('{0}\t{1:.2f}\t{2:.2f}'.format(self.num_bad_sectors,
-                                             float(100.0 * (self.get_unbroken_number_files()/self.get_number_files())),
-                                             float(100.0 * (self.num_bad_sectors/self.num_sectors))))
+        s = self.get_stat()
+        print('{0}\t{1:.2f}\t{2:.2f}'.format((s[key] for key in s.keys())))
+
+    def get_info(self):
+        info = dict()
+        info['num_engaged_sectors'] = self.num_engaged_sectors
+        info['num_bad_sectors'] = self.num_bad_sectors
+        info['number_files'] = self.get_number_files()
+        return info
 
 
 if __name__ == '__main__':

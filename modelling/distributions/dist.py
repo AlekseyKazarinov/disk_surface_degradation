@@ -1,4 +1,4 @@
-from distributions import *
+from modelling.distributions import *
 
 """
 In this module different distribution functions are described.
@@ -32,15 +32,15 @@ def get_distribution(vol, form, **kargs):
     #print('max_size in get_distribution = ', get_max_size())
 
     if form == 'linear_decay':
-        from distributions import linear_decay
+        from modelling.distributions import linear_decay
         return linear_decay.get_linear_decay()
 
     elif form == 'exp_decay':
-        from distributions import exp_decay
+        from modelling.distributions import exp_decay
         return exp_decay.get_exp_decay()
 
     elif form == 'user_distribution':
-        from distributions import user_distribution
+        from modelling.distributions import user_distribution
         user_distribution.get_user_dist()
 
     else:

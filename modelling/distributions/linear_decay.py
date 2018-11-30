@@ -1,7 +1,7 @@
 import math
 from random import random
 
-from distributions import *
+from modelling.distributions import *
 
 
 dist = dict()   # Here will be saved values of distribution function
