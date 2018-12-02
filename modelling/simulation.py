@@ -28,14 +28,21 @@ class Simulation:
         self.params = params
         if parameters:
             self.set_params(parameters)
-        self.disk = disk.Disk(params['SECTOR_SIZE'], params['DISK_VOLUME'])
-        self.disk.write_files(params['DEDICATED_VOLUME'], params['KIND_DISTRIBUTION'], params['MAX_FILE_SIZE'])
+        self.disk = disk.Disk(self.params['SECTOR_SIZE'], self.params['DISK_VOLUME'])
         self.stats = list()
+
+    def prepare(self):
+        """
+        Configures the system according their parameters
+        :return:
+        """
+        self.disk.write_files(self.params['DEDICATED_VOLUME'],
+                              self.params['KIND_DISTRIBUTION'],
+                              self.params['MAX_FILE_SIZE'])
 
     def add_bad_sector(self):
         """
         Adds one bad sector to the disk by random
-        :param d: selected disk
         :return:
         """
         if self.disk.num_bad_sectors == self.disk.num_sectors:
@@ -66,10 +73,12 @@ class Simulation:
         lst = [stat['num_bad_sectors'], stat['percent of unbroken files'], stat['percent of bad blocks']]
         self.stats.append(lst)
 
-    def simulate(self):
-        for i in range(params['MAX_BAD_SECTORS']):
+    def simulate(self, logging=False):
+        for i in range(self.params['MAX_BAD_SECTORS']):
             self.add_bad_sector()
             self.gather_stats()
+            if logging:
+                print('{0} bad sectors from {1} calculated'.format(i, self.params['MAX_BAD_SECTORS']))
 
     def get_info(self):
         info = self.disk.get_info()
@@ -109,6 +118,7 @@ def main():
     # my_disk = disk.Disk(params['SECTOR_SIZE'], params['DISK_VOLUME'])
     # my_disk.write_files(params['DEDICATED_VOLUME'], params['KIND_DISTRIBUTION'], params['MAX_FILE_SIZE'])
     my_simulation = Simulation()
+    my_simulation.prepare()
     my_simulation.simulate()
     # my_disk = disk.Disk(sector_size=4, volume=100)
     # my_disk.write_files(70, 'exp_decay', 0.05)

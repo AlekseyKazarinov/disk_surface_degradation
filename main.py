@@ -15,11 +15,11 @@ def load_parameters():
 def reset_parameter(sim):
     name = cmd.get_input_name()
     if name not in sim.params:
-        cmd.error_message('A mistake in name! Reset aborted.')
+        cmd.output_message('A mistake in name! Reset aborted.')
     else:
         new_value = cmd.get_input_value(name, sim.get_param(name))
         sim.set_param(name, new_value)
-        print('The new value has been accepted.')
+        cmd.output_message('The new value has been accepted.')
 
 
 def save_parameters(params):
@@ -52,7 +52,10 @@ def save_data(sim):
 
 def simulate(sim):
     cmd.print_parameters(sim.params)
-    sim.simulate()
+    cmd.output_message('Preparing files distribution...')
+    sim.prepare()
+    cmd.output_message('Distribution done. Simulation have been started.')
+    sim.simulate(logging=True)
     cmd.print_simulation_info(sim.get_info())
     cmd.output_finish_message()
     if cmd.offer_save_data():
@@ -74,7 +77,8 @@ def menu(cmds):
 
 def main():
     params = load_parameters()
-    model = simulation.Simulation(params)
+    sim = simulation.Simulation(params)
+    model = sim
     cmds = {'print --info': cmd.print_info,
             'print --param': (lambda: cmd.print_parameters(simulation.params)),
             'start': (lambda: simulate(model)),

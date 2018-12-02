@@ -52,10 +52,10 @@ def print_parameters(params):
 
 
 def get_input_name():
-    return input('Enter a name of a parameter: \n').upper()
+    return input('Enter a name of a parameter: \n').upper().replace(' ', '_')
 
 
-def error_message(msg):
+def output_message(msg):
     print(msg)
 
 

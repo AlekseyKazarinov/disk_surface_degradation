@@ -2,14 +2,17 @@ import math
 
 """
 In this package different distribution functions are described.
-By this time there are two types of the functions: linear and exponential decay, user_dist
+By this time there are three types of the functions: linear and exponential decay, user_dist
 These functions are implemented inside get_distribution function, which can receive
 additional parameters that may be required in calculations:
-- max_number - most big number of files that have the same size
 - max_size - the greatest size of file on a disk (sectors)
+- max_number (not used yet) - most big number of files that have the same size
 - file_name - file that has a distribution of files by size, must have for user_dist
 It is recommended to set at least one parameter.
-Each function in get_distribution might have its restricted set of required parameters.
+Each function in the package requires own set of needed parameters.
+"""
+"""
+Here shared parameters are placed.
 """
 
 max_number = 0

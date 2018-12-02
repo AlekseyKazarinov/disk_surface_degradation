@@ -20,12 +20,12 @@ def load_from_file():
     if not name:
         raise ReadFileException('Name of user file have not specified.')
     file = open(name, 'r')
-    distributions.volume = 0
+    user_volume = 0
     for line in file:
         size, n = (int(i) for i in line.rstrip().split())
         dist[size] = n
-        #distributions.volume += size * n
-        set_volume(get_volume() + size*n)
+        user_volume += size * n
+    set_volume(user_volume)
     return dist
 
 

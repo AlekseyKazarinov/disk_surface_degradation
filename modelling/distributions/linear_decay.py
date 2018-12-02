@@ -9,7 +9,7 @@ dist = dict()   # Here will be saved values of distribution function
 
 def build_linear_decay_dist():
     """
-    Constructs a linear decay distribution
+    Constructs a linear decay distribution according the parameters in __init__.py
     :return:
     """
     # max_number = get_max_number()
@@ -28,7 +28,7 @@ def build_linear_decay_dist():
         for x in range(1, max_size + 1):
             flag = (random() >= 0.5)
             f = math.floor(a * x + b) if flag else math.ceil(a * x + b)
-            if f:
+            if f > 0:
                 dist[x] = f
 
 
@@ -38,5 +38,8 @@ def linear_decay(x):
 
 
 def get_linear_decay():
+    """
+    Returns linear decay distribution function.
+    """
     build_linear_decay_dist()
     return linear_decay

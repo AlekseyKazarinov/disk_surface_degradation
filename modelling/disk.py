@@ -85,7 +85,7 @@ class Disk:
         self.num_bad_sectors = 0
         #print(self.num_sectors, self.num_engaged_sectors)
         self.free = []  # Sequence(self.num_sectors - self.num_engaged_sectors) - убрано, чтобы работало быстрее
-        self.dist = None   # Distribution of files by their size on the disk
+        self.dist = None  # Distribution of files by their size on the disk
         self.stats = []
 
     def __iter__(self):
@@ -111,10 +111,10 @@ class Disk:
             have = self.volume
             raise DiskException(f'Диск не резиновый! Требуется {take} Гб, имеется {have} Гб')
         engaged_sectors = convert_to_sectors(engaged_space, 4)
-        #print('engaged_sectors = ', engaged_sectors)
         self.num_engaged_sectors = 0
         self.free = Sequence(self.num_sectors - self.num_engaged_sectors)
         max_size = convert_to_sectors(max_size)
+        #print('engaged_sectors = ', engaged_sectors)
         #print('max_size', max_size)
         distribution = get_distribution(engaged_sectors, form, max_size=max_size)
         self.dist = []

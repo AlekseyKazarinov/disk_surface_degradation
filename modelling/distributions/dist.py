@@ -1,15 +1,8 @@
 from modelling.distributions import *
 
 """
-In this module different distribution functions are described.
-By this time there are two types of the functions: linear and exponential decay, user_dist
-These functions are implemented inside get_distribution function, which can receive
-additional parameters that may be required in calculations:
-- max_number - most big number of files that have the same size
-- max_size - the greatest size of file on a disk (sectors)
-- file_name - file that has a distribution of files by size, must have for user_dist
-It is recommended to set at least one parameter.
-Each function in get_distribution might have its restricted set of required parameters.
+It implements selection the distribution function
+using 'form' parameter
 """
 
 
@@ -19,8 +12,8 @@ class DistException(Exception):
 
 def get_distribution(vol, form, **kargs):
     """
-    :param vol: volume dedicated to files, number of sectors
-    :param form: sets type of distribution function ('linear', 'exp_decay')
+    :param vol: volume dedicated to files, number of sectors (if you use 'user_distribution' as the form, input None)
+    :param form: sets type of distribution function ('linear', 'exp_decay', 'user_distribution')
     :param kargs: you may set such parameters as max_number, max_size (number of sectors for a file)
     :return:
     """
