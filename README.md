@@ -15,8 +15,8 @@ So I creates this program to simulate and to plot P(b), where:
 Сurrent version - alpha
 
 SYSTEM REQUIREMENTS:
-For the model, described in code, the more the disk volume, the more RAM are required.
-It depends of set parameters such as volume of the disk (DISK_VOLUME), 
+For the model, described in code, the more the disk volume is, the more RAM are required.
+It depends on a set of parameters such as volume of the disk (DISK_VOLUME), 
 size of disk sector (SECTOR_SIZE), maximal number of bad sectors (MAX_BAD_SECTORS), 
 and volume of the files (DEDICATED_VOLUME).
-For example, it requires about 100 Mb RAM and two CPU cores to model 41 Mb HDD.
+For example, it requires about 100 Mb RAM and two CPU cores for executing model of HDD with 41 Mb capacity.
